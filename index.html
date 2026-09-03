@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="세계 과일도감">
+<meta name="theme-color" content="#fff8dc">
+<title>세계 과일도감</title>
+<style>
+:root{--ink:#263238;--muted:#607078;--paper:#fffdf7;--yellow:#fff1a8;--line:#eadfbe;--green:#4d8b62;--blue:#4778a8;--card:#fff}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif;color:var(--ink);background:#f7f3e8}
+header{position:sticky;top:0;z-index:20;background:var(--yellow);border-bottom:1px solid #e6d889;padding:12px 14px calc(10px + env(safe-area-inset-top))}
+.head{max-width:1050px;margin:auto}.title{font-size:27px;font-weight:900;margin-bottom:7px}.subtitle{font-size:13px;color:#665f3b;margin-bottom:10px}
+.actions{display:flex;gap:7px;flex-wrap:wrap}.btn{border:1px solid #d7c873;background:#fffef4;border-radius:12px;padding:9px 11px;font-weight:800;font-size:14px}.btn:active{transform:scale(.98)}
+main{max-width:1050px;margin:auto;padding:14px}.notice{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px;margin-bottom:12px}.notice b{display:block;margin-bottom:4px}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.search{flex:1;min-width:220px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;font-size:16px;background:#fff}
+.chips{display:flex;gap:7px;overflow:auto;padding-bottom:4px;margin-bottom:14px}.chip{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;font-weight:800}.chip.on{background:#dff0e3;border-color:#a8ceb2}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:0 2px 7px #0000000b;cursor:pointer}
+.fruitpic{height:150px;border-radius:14px;background:linear-gradient(135deg,#fff9e9,#f0f7ee);display:flex;align-items:center;justify-content:center;font-size:78px;overflow:hidden}.fruitpic img{width:100%;height:100%;object-fit:cover}.no-photo{font-size:13px;color:#7c857e;font-weight:800;text-align:center}.card h3{margin:10px 0 4px;font-size:20px}.en{font-size:12px;color:var(--muted);font-weight:700}.tags{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.tag{font-size:12px;background:#f1f6f2;border-radius:999px;padding:5px 7px}
+.fav{width:100%;border:1px solid #d8d1b9;background:#fffdf5;border-radius:10px;padding:8px;font-weight:800;cursor:pointer}.fav.on{background:#fff3b7}
+.empty{text-align:center;padding:40px;color:var(--muted)}
+dialog{width:min(800px,95vw);max-height:92vh;border:0;border-radius:20px;padding:0;box-shadow:0 20px 60px #0005}dialog::backdrop{background:#0007}.modal{padding:18px}.modal h2{margin-top:0}.detailpic{height:260px;border-radius:16px;background:#f2f6ed;display:flex;align-items:center;justify-content:center;font-size:100px;overflow:hidden}.detailpic img{width:100%;height:100%;object-fit:cover}.info{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.box{background:#faf8ef;border:1px solid var(--line);border-radius:12px;padding:10px;line-height:1.55}.box b{display:block;margin-bottom:5px}.wide{grid-column:1/-1}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:15px;flex-wrap:wrap}
+label{display:block;font-weight:800;margin:10px 0 5px}input,textarea,select{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;font:inherit}textarea{min-height:100px}
+.parent-state{font-size:13px;font-weight:900;margin-top:6px}.onstate{color:#2d7650}.offstate{color:#6b5b3b}.small{font-size:12px;color:var(--muted);line-height:1.55}
+.country{color:#2b6c8c;text-decoration:underline;text-decoration-style:dotted;cursor:pointer;font-weight:800}
+.section-title{font-weight:900;margin:14px 0 7px}.discover-list{display:grid;gap:8px}.discover-row{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}.discover-row.disabled{opacity:.55}.discover-row .name{font-weight:900}.discover-row .meta{font-size:12px;color:var(--muted)}
+
+.mapwrap{background:#dff1f6;border:1px solid #b9dce5;border-radius:18px;padding:10px;overflow:hidden}.worldmap{width:100%;height:auto;display:block}.land{fill:#d9e7c8;stroke:#8aa67a;stroke-width:1}.ocean{fill:#dff1f6}.mapdot{fill:#f2a43a;stroke:#fff;stroke-width:2;cursor:pointer}.mapdot.reg{fill:#5b8fc9}.maplabel{font-size:10px;font-weight:900;fill:#31434b;pointer-events:none}.maphint{font-size:12px;color:#5c6b70;line-height:1.5;margin:8px 2px}.mapchips{display:flex;gap:6px;overflow:auto;margin:8px 0}.mapchip{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-weight:800}.mapchip.on{background:#dff0e3}
+.photo-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.photo-note{font-size:12px;color:var(--muted);margin-top:5px}
+@media(max-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.fruitpic{height:120px;font-size:60px}.card{padding:9px}.card h3{font-size:17px}.info{grid-template-columns:1fr}.wide{grid-column:auto}.detailpic{height:210px}}
+</style>
+</head>
+<body>
+<header><div class="head">
+<div class="title" id="appTitle">🌎 세계 과일도감</div>
+<div class="subtitle">과일을 만나고, 그 과일이 자라는 나라와 세계를 함께 배워요.</div>
+<div class="actions"><button class="btn" id="mapBtn">🌍 세계지도 탐험</button>
+<button class="btn" id="discoverBtn">🗺️ 새로운 과일 발견</button>
+<button class="btn" id="parentBtn">🔒 부모님 모드 · 꺼짐</button>
+<button class="btn" id="backupBtn">💾 백업</button>
+</div><div id="parentState" class="parent-state offstate"></div>
+</div></header>
+
+<main>
+<section class="notice" id="daily"></section>
+<div class="controls"><input class="search" id="search" placeholder="🔎 과일 이름, 영어 이름, 나라로 찾아보세요"></div>
+<div class="chips" id="chips"></div>
+<div class="grid" id="grid"></div>
+<div id="empty" class="empty" hidden>찾는 과일이 없어요.</div>
+</main>
+
+<dialog id="mapDlg"><div class="modal" id="mapBox"></div></dialog>
+<dialog id="detailDlg"><div class="modal" id="detail"></div></dialog>
+<dialog id="discoverDlg"><div class="modal" id="discoverBox"></div></dialog>
+<dialog id="countryDlg"><div class="modal" id="countryBox"></div></dialog>
+
+<dialog id="parentDlg"><div class="modal">
+<h2>👨‍👩‍👧 부모님 모드</h2>
+<p class="small">도감 이름과 과일 정보를 보완하고, 사진을 관리할 수 있어요.</p>
+<label>도감 이름</label><input id="bookName" placeholder="예: 민수의 세계 과일도감">
+<label>새 PIN (선택)</label><input id="pin" type="password" inputmode="numeric" maxlength="8" placeholder="비워두면 기존 PIN 유지">
+<div class="modal-actions"><button class="btn" id="parentClose">닫기</button><button class="btn" id="parentSave">저장</button></div>
+</div></dialog>
+
+<dialog id="editDlg"><div class="modal" id="editBox"></div></dialog>
+<dialog id="backupDlg"><div class="modal">
+<h2>💾 데이터 안전관리</h2>
+<p class="small">과일·즐겨찾기·이름·직접 등록한 사진·부모님이 보완한 정보를 하나의 백업 파일로 저장하거나 복원합니다.</p>
+<div class="modal-actions">
+<button class="btn" id="exportBtn">백업 파일 만들기</button>
+<button class="btn" id="importBtn">백업 복원</button>
+<button class="btn" id="backupClose">닫기</button>
+</div><input type="file" id="file" accept=".json" hidden>
+</div></dialog>
+
+<input type="file" id="photoInput" accept="image/*" hidden>
+
+<script>
+const KEY="world_fruit_book_v1";
+const NAMEKEY="world_fruit_book_name_v1";
+const PARENTKEY="world_fruit_parent_v1";
+const PINKEY="world_fruit_parent_pin_v1";
+const DB_NAME="world_fruit_photos_v1", DB_STORE="photos";
+let state={foods:[],fav:new Set()};
+let category="전체", parent=false, photoTarget=null;
+
+const photoMap={
+"사과":"https://commons.wikimedia.org/wiki/Special:FilePath/Apple%20fruit.jpg?width=900",
+"바나나":"https://commons.wikimedia.org/wiki/Special:FilePath/Banana%20Fruit.JPG?width=900",
+"오렌지":"https://commons.wikimedia.org/wiki/Special:FilePath/Orange%20fruit.jpg?width=900",
+"딸기":"https://commons.wikimedia.org/wiki/Special:FilePath/Strawberries.jpg?width=900",
+"포도":"https://commons.wikimedia.org/wiki/Special:FilePath/Grapes.jpg?width=900",
+"수박":"https://commons.wikimedia.org/wiki/Special:FilePath/Watermelon.jpg?width=900",
+"파인애플":"https://commons.wikimedia.org/wiki/Special:FilePath/Pineapple.jpg?width=900",
+"망고":"https://commons.wikimedia.org/wiki/Special:FilePath/Mangoes.jpg?width=900",
+"키위":"https://commons.wikimedia.org/wiki/Special:FilePath/Kiwifruit.jpg?width=900",
+"석류":"https://commons.wikimedia.org/wiki/Special:FilePath/Pomegranate.jpg?width=900",
+"코코넛":"https://commons.wikimedia.org/wiki/Special:FilePath/Coconut.jpg?width=900",
+"용과":"https://commons.wikimedia.org/wiki/Special:FilePath/Dragon%20fruit.JPG?width=900",
+"망고스틴":"https://commons.wikimedia.org/wiki/Special:FilePath/Mangosteen%20Fruit.jpg?width=900",
+"람부탄":"https://commons.wikimedia.org/wiki/Special:FilePath/Rambutan.jpg?width=900",
+"두리안":"https://commons.wikimedia.org/wiki/Special:FilePath/Durian.jpg?width=900",
+"패션프루트":"https://commons.wikimedia.org/wiki/Special:FilePath/Passionfruit.jpg?width=900",
+"파파야":"https://commons.wikimedia.org/wiki/Special:FilePath/Papaya.jpg?width=900",
+"구아바":"https://commons.wikimedia.org/wiki/Special:FilePath/Guava.jpg?width=900",
+"리치":"https://commons.wikimedia.org/wiki/Special:FilePath/Lychee.jpg?width=900",
+"감":"https://commons.wikimedia.org/wiki/Special:FilePath/Persimmon.jpg?width=900",
+"복숭아":"https://commons.wikimedia.org/wiki/Special:FilePath/Peaches.jpg?width=900",
+"배":"https://commons.wikimedia.org/wiki/Special:FilePath/Pears.jpg?width=900",
+"레몬":"https://commons.wikimedia.org/wiki/Special:FilePath/Lemon.jpg?width=900",
+"블루베리":"https://commons.wikimedia.org/wiki/Special:FilePath/Blueberries.jpg?width=900",
+"체리":"https://commons.wikimedia.org/wiki/Special:FilePath/Cherry.jpg?width=900",
+"무화과":"https://commons.wikimedia.org/wiki/Special:FilePath/Fig%20fruit.jpg?width=900",
+"대추야자":"https://commons.wikimedia.org/wiki/Special:FilePath/Dates.jpg?width=900",
+"아보카도":"https://commons.wikimedia.org/wiki/Special:FilePath/Avocado.jpg?width=900",
+"스타프루트":"https://commons.wikimedia.org/wiki/Special:FilePath/Carambola.jpg?width=900",
+"잭프루트":"https://commons.wikimedia.org/wiki/Special:FilePath/Jackfruit.jpg?width=900"
+};
+
+const base=[
+["사과","Apple","🍎","온대","동아시아·유럽","중국, 미국, 튀르키예","사과는 장미과에 속하는 낙엽성 과일나무의 열매예요. 품종이 매우 다양하며 전 세계의 온대 지역에서 널리 재배됩니다. 꽃이 핀 뒤 열매가 자라고, 품종과 기후에 따라 익는 시기가 달라요.","달콤하거나 새콤하고 아삭한 식감","서늘한 겨울과 따뜻한 여름이 있는 온대 기후","껍질째 먹거나 주스·잼·파이 등에 이용","한국 생산: 예","한국 주요 산지: 경북 청송·영주·안동, 충북 충주 등","자연 수확 시기: 대체로 8~11월(품종별 차이)"],
+["바나나","Banana","🍌","열대·아열대","동남아시아·열대권","인도, 중국, 인도네시아, 브라질, 에콰도르","바나나는 나무처럼 보이지만 실제로는 매우 큰 여러해살이풀의 열매예요. 따뜻하고 서리가 거의 없는 지역에서 잘 자라며 익는 과정에서 색과 향이 크게 변합니다.","부드럽고 달콤하며 향이 진함","고온다습하고 서리가 적은 기후","껍질을 벗겨 생으로 먹거나 음료·요리에 이용","한국 생산: 제한적","한국 주요 산지: 제주·남부 일부 시설재배","자연 수확 시기: 노지에서는 연중 가능 지역, 시설재배는 작형에 따라 다름"],
+["오렌지","Orange","🍊","아열대","아시아 기원","브라질, 중국, 인도, 멕시코","오렌지는 감귤류의 대표 과일이에요. 따뜻한 지역에서 잘 자라며 품종에 따라 껍질 색과 단맛·산미가 달라집니다.","새콤달콤하고 즙이 많으며 향긋함","따뜻한 아열대·지중해성 기후","생으로 먹거나 주스·마멀레이드에 이용","한국 생산: 일부","한국 주요 산지: 제주","자연 수확 시기: 제주 노지 감귤류는 겨울철 중심(품종별 차이)"],
+["딸기","Strawberry","🍓","온대","유럽·아메리카","중국, 미국, 멕시코","딸기는 장미과에 속하는 작은 초본성 식물에서 열리는 열매로, 우리가 열매처럼 먹는 부분의 표면에 작은 씨처럼 보이는 구조가 많이 붙어 있어요. 품종과 재배방식에 따라 크기와 향이 크게 달라요.","달콤하고 상큼하며 향이 좋음","서늘한 온대 기후와 일교차가 있는 환경","생으로 먹거나 잼·케이크·요거트에 이용","한국 생산: 예","한국 주요 산지: 충남 논산, 경남 밀양·진주, 전남 담양 등","자연 수확 시기: 대체로 겨울~봄(시설재배 중심)"],
+["포도","Grape","🍇","온대·지중해성","서아시아·유럽 기원","중국, 이탈리아, 프랑스, 미국, 스페인","포도는 덩굴성 목본식물에 송이로 열리는 과일이에요. 생식용뿐 아니라 건포도와 주스, 와인 등 다양한 형태로 이용됩니다.","품종에 따라 달콤함·산미·향이 매우 다양","햇빛이 충분하고 비교적 건조한 온대·지중해성 기후","생으로 먹거나 건포도·주스 등에 이용","한국 생산: 예","한국 주요 산지: 경북 김천·영천, 충북 영동 등","자연 수확 시기: 대체로 8~10월"],
+["수박","Watermelon","🍉","따뜻한 지역","아프리카 기원","중국, 튀르키예, 인도, 이란","수박은 덩굴을 땅 위로 뻗으며 자라는 박과 과일이에요. 과육의 대부분이 수분으로 이루어져 있어 더운 계절에 시원한 과일로 많이 먹습니다.","시원하고 달콤하며 아삭함","햇빛이 충분하고 따뜻한 기후","주로 생으로 먹음","한국 생산: 예","한국 주요 산지: 경남 함안, 충북 음성, 전북 고창 등","자연 수확 시기: 대체로 6~8월(작형별 차이)"],
+["파인애플","Pineapple","🍍","열대","남아메리카","코스타리카, 필리핀, 브라질, 인도네시아","파인애플은 여러 작은 꽃에서 생긴 구조가 모여 하나의 큰 열매처럼 보이는 독특한 과일이에요. 잎이 단단하고 길며 따뜻한 지역에서 재배됩니다.","새콤달콤하고 향이 진함","따뜻하고 습한 열대 기후","생으로 먹거나 주스·요리에 이용","한국 생산: 거의 없음","한국 주요 산지: 일부 시설재배·시험재배 수준","자연 수확 시기: 열대 지역은 연중 재배 가능"],
+["망고","Mango","🥭","열대·아열대","남아시아","인도, 중국, 인도네시아, 파키스탄, 멕시코","망고는 옻나무과의 상록성 과일나무 열매로, 품종이 매우 많아요. 덜 익었을 때와 완전히 익었을 때 맛과 향이 크게 달라집니다.","잘 익으면 향긋하고 달콤하며 부드러움","따뜻한 열대·아열대 기후","생으로 먹거나 주스·디저트에 이용","한국 생산: 제한적","한국 주요 산지: 제주·전남 등 시설재배","자연 수확 시기: 시설재배와 품종에 따라 다르며 일반적으로 여름 전후"],
+["키위","Kiwi fruit","🥝","온대","중국 기원·뉴질랜드 재배 발전","중국, 뉴질랜드, 이탈리아, 그리스","키위는 원산지가 중국인 덩굴식물의 열매예요. 뉴질랜드에서 상업적으로 크게 발전했고, 오늘날에는 여러 온대 지역에서 재배됩니다.","새콤달콤하고 부드러우며 작은 씨가 많음","겨울 휴면이 필요한 온대 기후","껍질을 벗겨 생으로 먹거나 디저트에 이용","한국 생산: 예","한국 주요 산지: 제주, 전남·경남 일부","자연 수확 시기: 대체로 10~12월"],
+["석류","Pomegranate","❤️","건조한 온대·아열대","서아시아","인도, 이란, 튀르키예, 중국","석류는 단단한 껍질 안에 붉거나 분홍빛의 씨를 많이 담고 있는 과일이에요. 따뜻하면서 비교적 건조한 환경을 좋아합니다.","새콤달콤하고 알알이 씹힘","따뜻하고 비교적 건조한 온대·아열대","알을 생으로 먹거나 주스로 이용","한국 생산: 일부","한국 주요 산지: 남부 따뜻한 지역·시설재배","자연 수확 시기: 대체로 가을"],
+["코코넛","Coconut","🥥","열대","인도양·동남아시아 열대권","인도네시아, 필리핀, 인도, 스리랑카","코코넛은 야자나무의 열매예요. 바깥쪽에는 섬유질과 단단한 껍질이 있고 안쪽에는 코코넛워터와 흰 과육이 들어 있습니다.","코코넛워터는 시원하고 과육은 고소함","고온다습한 열대 기후","코코넛워터와 과육을 먹고 기름·가공품으로도 이용","한국 생산: 없음","한국 주요 산지: 상업적 주요 산지 없음","자연 수확 시기: 열대 지역에서 연중 수확 가능"],
+["용과","Dragon fruit","🐉","열대·아열대","중앙아메리카","베트남, 중국, 인도네시아, 태국","용과는 선인장과 식물의 열매로, 분홍색 또는 붉은 껍질과 하얀색·붉은색 과육이 잘 알려져 있어요. 밤에 꽃이 피는 종류가 많습니다.","부드럽고 은은하게 달며 검은 씨가 씹힘","따뜻하고 햇빛이 충분한 기후","반으로 잘라 숟가락으로 먹음","한국 생산: 예","한국 주요 산지: 제주 등 남부 지역 시설재배","자연 수확 시기: 여름~가을 중심(재배형태에 따라 차이)"],
+["망고스틴","Mangosteen","🟣","열대","동남아시아","태국, 인도네시아, 베트남, 말레이시아","보라색의 단단한 껍질 안에 하얀 과육이 여러 조각 들어 있어요. 열대 지방에서 자라는 대표적인 열대 과일입니다.","새콤달콤하고 부드러움","고온다습한 열대 기후","껍질을 열어 하얀 과육을 먹음","한국 생산: 없음","한국 주요 산지: 상업적 주요 산지 없음","자연 수확 시기: 열대 산지의 품종·지역에 따라 다름"],
+["람부탄","Rambutan","🔴","열대","동남아시아","인도네시아, 태국, 말레이시아, 베트남","람부탄은 껍질에 부드러운 가시 같은 돌기가 나 있는 열대 과일이에요. 속에는 반투명한 과육과 씨가 들어 있습니다.","달콤하고 촉촉함","고온다습한 열대 기후","껍질을 벗겨 과육을 먹음","한국 생산: 없음","한국 주요 산지: 상업적 주요 산지 없음","자연 수확 시기: 열대 지역에서 계절에 따라 수확"],
+["두리안","Durian","🟢","열대","동남아시아","태국, 인도네시아, 말레이시아","두리안은 크고 단단한 가시 껍질과 매우 강한 향으로 유명해요. 익은 과육은 매우 부드럽고 크리미합니다.","향이 매우 강하고 진하며 크리미함","고온다습한 열대 기후","익은 과육을 생으로 먹거나 디저트에 이용","한국 생산: 없음","한국 주요 산지: 상업적 주요 산지 없음","자연 수확 시기: 산지·품종에 따라 다름"],
+["패션프루트","Passion fruit","🟣","열대·아열대","남아메리카","브라질, 콜롬비아, 인도네시아, 페루","둥근 열매 안에 향이 강한 과육과 씨가 많이 들어 있어요. 덩굴성 식물에서 열립니다.","새콤하고 향긋함","따뜻한 열대·아열대 기후","과육과 씨를 함께 먹거나 음료에 이용","한국 생산: 제한적","한국 주요 산지: 남부·제주 시설재배","자연 수확 시기: 여름~가을 중심"],
+["파파야","Papaya","🟠","열대","중앙아메리카","인도, 도미니카공화국, 브라질, 멕시코","파파야는 따뜻한 지역에서 빠르게 자라는 초본성 나무 모양 식물의 열매예요. 익으면 과육이 주황색으로 변하는 종류가 많습니다.","익으면 부드럽고 달콤함","고온의 열대 기후","익은 과육을 생으로 먹음","한국 생산: 제한적","한국 주요 산지: 제주·남부 시설재배","자연 수확 시기: 열대 지역은 연중 가능"],
+["구아바","Guava","🟢","열대·아열대","열대 아메리카","인도, 중국, 태국, 멕시코","구아바는 품종에 따라 껍질과 과육의 색이 달라요. 따뜻한 지역에서 비교적 잘 자라고 향이 강한 편입니다.","달콤하거나 새콤하고 향긋함","따뜻한 열대·아열대 기후","잘 씻어 껍질째 먹거나 주스로 이용","한국 생산: 제한적","한국 주요 산지: 제주 등 시설재배","자연 수확 시기: 시설·지역에 따라 다름"],
+["리치","Lychee","🔴","아열대·열대","중국 남부","중국, 인도, 베트남, 태국, 마다가스카르","리치는 거친 붉은 껍질을 벗기면 하얗고 반투명한 과육이 나오는 과일이에요. 중국 남부에서 오래 재배되어 왔습니다.","달콤하고 꽃 향 같은 향이 남","따뜻하고 습한 아열대·열대 기후","껍질과 씨를 제거하고 과육을 먹음","한국 생산: 거의 없음","한국 주요 산지: 상업적 주요 산지 없음","자연 수확 시기: 산지의 초여름 중심인 경우가 많음"],
+["감","Persimmon","🟠","온대","동아시아","중국, 한국, 일본, 아제르바이잔","감은 동아시아에서 오래 재배되어 온 과일이에요. 단감처럼 바로 먹는 종류와 떫은맛을 없애 먹는 종류가 있습니다.","품종에 따라 달콤하고 아삭하거나 부드러움","온대 기후","생으로 먹거나 말려서 곶감으로 이용","한국 생산: 예","한국 주요 산지: 경북 상주·청도, 전남·경남 일부","자연 수확 시기: 대체로 9~11월"],
+["복숭아","Peach","🍑","온대","중국 기원","중국, 스페인, 이탈리아, 그리스, 튀르키예","복숭아는 중국에서 오래 재배된 온대 과일이에요. 털이 있는 복숭아와 털이 거의 없는 천도복숭아 등 다양한 종류가 있습니다.","향긋하고 달콤하며 과즙이 많음","겨울 휴면과 따뜻한 여름이 있는 온대 기후","생으로 먹거나 통조림·디저트에 이용","한국 생산: 예","한국 주요 산지: 충북 음성, 경북 영천 등","자연 수확 시기: 대체로 6~9월"],
+["배","Pear","🍐","온대","유럽·동아시아","중국, 이탈리아, 미국, 아르헨티나","배는 유럽배와 동양배처럼 여러 종류가 있어요. 한국에서 흔한 동양배는 크고 둥글며 아삭하고 즙이 많은 것이 특징입니다.","아삭하고 즙이 많으며 달콤함","온대 기후","생으로 먹거나 요리에 이용","한국 생산: 예","한국 주요 산지: 전남 나주, 충남 천안, 경기 안성 등","자연 수확 시기: 대체로 8~10월"],
+["레몬","Lemon","🍋","아열대","아시아 기원","인도, 멕시코, 중국, 아르헨티나, 브라질","레몬은 강한 신맛과 향이 특징인 감귤류예요. 과육뿐 아니라 껍질의 향기 성분도 음료와 요리에 많이 사용합니다.","매우 새콤하고 향긋함","따뜻한 아열대·지중해성 기후","즙과 껍질을 음료·요리에 이용","한국 생산: 제한적","한국 주요 산지: 제주 등 남부 시설재배","자연 수확 시기: 품종·재배형태에 따라 다름"],
+["블루베리","Blueberry","🫐","온대","북아메리카","미국, 캐나다, 페루, 칠레, 스페인","블루베리는 푸른빛 또는 보랏빛 열매가 열리는 관목성 과일이에요. 품종에 따라 크기와 맛이 다르고 신선과일뿐 아니라 가공식품에도 많이 이용됩니다.","달콤하면서 약간 새콤함","온대 기후","생으로 먹거나 요거트·디저트에 이용","한국 생산: 예","한국 주요 산지: 전남·경남·충북 등 여러 지역","자연 수확 시기: 대체로 6~8월"],
+["체리","Cherry","🍒","온대","유럽·서아시아","튀르키예, 미국, 칠레, 이란, 우즈베키스탄","체리는 벚나무속 식물의 열매를 통칭하는 이름으로, 단맛이 강한 스위트체리와 신맛이 강한 종류 등이 있어요.","달콤하고 과즙이 많거나 새콤함","겨울 휴면이 필요한 온대 기후","생으로 먹거나 디저트에 이용","한국 생산: 소규모","한국 주요 산지: 경북·충북 등 일부 지역","자연 수확 시기: 대체로 5~7월"],
+["무화과","Fig","🟤","지중해성","서아시아","튀르키예, 이집트, 알제리, 이란, 모로코","무화과는 꽃이 밖에서 잘 보이지 않는 독특한 구조를 가진 식물이에요. 익으면 매우 부드럽고 달콤해지며 생과와 건과 모두 이용됩니다.","부드럽고 달콤함","따뜻하고 비교적 건조한 기후","생으로 먹거나 말려서 먹음","한국 생산: 예","한국 주요 산지: 전남 영암 등 남부 지역","자연 수확 시기: 대체로 8~10월"],
+["대추야자","Date","🟤","건조·사막","서아시아·북아프리카","이집트, 사우디아라비아, 이란, 알제리, 이라크","대추야자는 야자나무의 열매로, 덥고 건조한 지역의 오아시스 농업과 깊은 관련이 있어요. 말린 대추야자는 매우 오래 보관할 수 있습니다.","매우 달고 쫀득함","덥고 건조한 사막·건조 기후","생으로 먹거나 말려서 먹음","한국 생산: 없음","한국 주요 산지: 상업적 주요 산지 없음","자연 수확 시기: 산지에 따라 늦여름~가을"],
+["아보카도","Avocado","🥑","아열대·열대","중앙아메리카","멕시코, 콜롬비아, 페루, 도미니카공화국, 케냐","아보카도는 씨가 하나 크게 들어 있고 과육에 지방이 비교적 많은 과일이에요. 열대와 아열대 지역에서 재배됩니다.","부드럽고 고소함","따뜻한 아열대·열대 기후","생으로 먹거나 샐러드·소스에 이용","한국 생산: 제한적","한국 주요 산지: 제주 등 시설·시험재배","자연 수확 시기: 품종·재배지역에 따라 다름"],
+["스타프루트","Star fruit","⭐","열대·아열대","동남아시아","말레이시아, 인도네시아, 필리핀, 인도","가로로 자르면 별 모양이 되는 독특한 과일이에요. 품종에 따라 단맛과 신맛의 정도가 크게 달라집니다.","달콤하거나 새콤함","따뜻하고 습한 열대·아열대 기후","잘 씻어 얇게 잘라 먹음","한국 생산: 없음","한국 주요 산지: 상업적 주요 산지 없음","자연 수확 시기: 열대 산지에서 계절에 따라 수확"],
+["잭프루트","Jackfruit","🟢","열대","남아시아","인도, 방글라데시, 태국, 인도네시아, 말레이시아","잭프루트는 나무에서 열리는 과일 가운데 매우 큰 편이에요. 한 열매 안에 여러 개의 먹는 과육 조각이 들어 있습니다.","익으면 달콤하고 향긋함","고온다습한 열대 기후","익은 과육을 생으로 먹거나 요리에 이용","한국 생산: 없음","한국 주요 산지: 상업적 주요 산지 없음","자연 수확 시기: 열대 산지의 품종·지역에 따라 다름"]
+];
+
+const extra=[
+["두꾸","Duku","🟡","열대","동남아시아","인도네시아, 말레이시아"],
+["살락(뱀과일)","Salak","🟤","열대","인도네시아","인도네시아, 말레이시아"],
+["롱간","Longan","🟤","열대·아열대","동남아시아","중국, 태국, 베트남"],
+["체리모야","Cherimoya","🟢","아열대","남아메리카","페루, 에콰도르, 스페인"],
+["페이조아","Feijoa","🟢","온대·아열대","남아메리카","뉴질랜드, 콜롬비아, 조지아"],
+["구스베리","Gooseberry","🟢","온대","유럽·아시아","인도, 영국, 독일"],
+["블랙베리","Blackberry","⚫","온대","유럽·아메리카","멕시코, 미국, 세르비아"],
+["크랜베리","Cranberry","🔴","온대","북아메리카","미국, 캐나다, 칠레"],
+["자몽","Grapefruit","🍊","아열대","카리브해 기원","중국, 미국, 멕시코, 남아프리카공화국"],
+["금귤","Kumquat","🟠","아열대","동아시아","중국, 일본, 한국"],
+["유자","Yuzu","🟡","온대·아열대","동아시아","중국, 일본, 한국"],
+["한라봉","Hallabong","🍊","아열대","일본 육성·한국 재배","한국, 일본"],
+["망고스틴","Mangosteen","🟣","열대","동남아시아","태국, 인도네시아, 베트남"],
+["살구","Apricot","🟠","온대","중앙아시아","튀르키예, 우즈베키스탄, 이란"],
+["자두","Plum","🟣","온대","유럽·아시아","중국, 루마니아, 세르비아"],
+["모과","Quince","🟡","온대","서아시아","튀르키예, 중국, 우즈베키스탄"],
+["타마린드","Tamarind","🟤","열대","아프리카 기원","인도, 태국, 멕시코"],
+["카람볼라","Carambola","⭐","열대·아열대","동남아시아","말레이시아, 인도네시아, 필리핀"],
+["아세로라","Acerola","🔴","열대","카리브해·중앙아메리카","브라질, 푸에르토리코"],
+["그라비올라","Soursop","🟢","열대","중앙아메리카·남아메리카","멕시코, 브라질, 콜롬비아"],
+["쿠푸아수","Cupuaçu","🟤","열대","아마존","브라질, 페루"],
+["마카다미아 열매","Macadamia","🟤","아열대·열대","호주 기원","남아프리카공화국, 호주, 케냐"],
+["두리안","Durian","🟢","열대","동남아시아","태국, 인도네시아, 말레이시아"],
+["망고","Mango","🥭","열대·아열대","남아시아","인도, 멕시코, 중국"]
+];
+
+const countryInfo={
+"중국":["아시아 동부","약 960만 km²","약 14억 명","쌀·차·사과·배·감귤 등","황허·양쯔강 문명 등 오랜 역사를 가진 큰 나라로 지역마다 기후와 농업이 매우 다양해요."],
+"인도":["아시아 남부","약 329만 km²","약 14억 명","망고·바나나·차·향신료 등","인더스 문명과 여러 왕조의 역사를 거쳐 현대의 다언어·다문화 국가를 이루고 있어요."],
+"브라질":["남아메리카 동부","약 851만 km²","약 2억 1천만 명","커피·오렌지·대두·사탕수수 등","아마존 열대우림을 비롯해 매우 다양한 자연환경을 가진 남아메리카 최대 국가예요."],
+"미국":["북아메리카","약 983만 km²","약 3억 4천만 명","옥수수·밀·사과·감귤·아몬드 등","여러 지역의 기후가 달라 과일과 농산물의 종류가 매우 다양해요."],
+"튀르키예":["유럽·아시아 사이","약 78만 km²","약 8천 5백만 명","체리·무화과·살구·헤이즐넛 등","유럽과 아시아를 잇는 위치에 있으며 지중해·흑해 등 다양한 기후가 있어요."],
+"태국":["동남아시아","약 51만 km²","약 7천만 명","쌀·두리안·망고·파인애플 등","열대 기후가 넓게 나타나며 과일 농업과 관광이 중요한 나라예요."],
+"인도네시아":["동남아시아의 섬나라","약 191만 km²","약 2억 8천만 명","바나나·코코넛·망고스틴·두리안 등","수많은 섬으로 이루어졌고 적도 주변의 따뜻하고 습한 기후가 열대 과일 재배에 잘 맞아요."],
+"멕시코":["북아메리카 남부","약 196만 km²","약 1억 3천만 명","아보카도·망고·라임·딸기 등","고대 마야·아즈텍 문명과 스페인 식민지 역사를 거쳐 형성된 나라예요."],
+"뉴질랜드":["오세아니아","약 27만 km²","약 500만 명","키위·사과·포도·양고기 등","남반구의 섬나라로 온대 기후가 많고 농축산업이 발달했어요."],
+"필리핀":["동남아시아의 섬나라","약 30만 km²","약 1억 1천만 명","바나나·파인애플·코코넛·망고 등","7천 개가 넘는 섬으로 이루어졌으며 열대 기후가 넓게 나타나요."],
+"한국":["동아시아","약 10만 km²","약 5천 2백만 명","사과·배·감·딸기·감귤 등","사계절이 뚜렷하고 산지가 많은 나라로 지역별 기후 차이를 이용해 다양한 과일을 재배해요."],
+"일본":["동아시아","약 38만 km²","약 1억 2천만 명","감귤·사과·배·포도 등","남북으로 길어 기후 차이가 크며 지역 특색이 강한 과일 생산지가 많아요."],
+"콜롬비아":["남아메리카 북서부","약 114만 km²","약 5천 3백만 명","바나나·커피·망고·아보카도 등","적도 부근의 고도 차이가 커서 열대부터 서늘한 산악 기후까지 다양한 농업이 가능해요."],
+"페루":["남아메리카 서부","약 129만 km²","약 3천 4백만 명","포도·블루베리·아보카도·망고 등","태평양 연안 사막, 안데스 산맥, 아마존 지역이 함께 있어 자연환경이 매우 다양해요."],
+"이란":["서아시아","약 165만 km²","약 9천만 명","석류·대추야자·피스타치오·포도 등","고원과 건조 지역이 넓으며 오랜 페르시아 문명의 역사를 가지고 있어요."],
+"스페인":["유럽 남서부","약 51만 km²","약 4천 9백만 명","오렌지·감귤·포도·복숭아 등","지중해성 기후 지역이 넓어 과일과 채소 농업이 발달했어요."],
+"이탈리아":["유럽 남부","약 30만 km²","약 5천 9백만 명","포도·오렌지·복숭아·키위 등","지중해성 기후가 넓고 고대 로마의 역사와 지역별 음식문화가 유명해요."]
+};
+
+function makeData(){
+  state.foods=base.map((f,i)=>({id:"f"+i,name:f[0],en:f[1],emoji:f[2],zone:f[3],region:f[4],countries:f[5],desc:f[6],taste:f[7],climate:f[8],eat:f[9],korea:f[10],korArea:f[11],harvest:f[12],photo:photoMap[f[0]]||"",custom:false}));
+}
+function dbOpen(){return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>r.result.createObjectStore(DB_STORE);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function putPhoto(id,data){const db=await dbOpen();return new Promise((res,rej)=>{const tx=db.transaction(DB_STORE,"readwrite");tx.objectStore(DB_STORE).put(data,id);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
+async function getPhoto(id){const db=await dbOpen();return new Promise((res,rej)=>{const tx=db.transaction(DB_STORE,"readonly");const r=tx.objectStore(DB_STORE).get(id);r.onsuccess=()=>res(r.result||"");r.onerror=()=>rej(r.error)})}
+async function allPhotos(){const db=await dbOpen();return new Promise((res,rej)=>{const tx=db.transaction(DB_STORE,"readonly"),s=tx.objectStore(DB_STORE),out={};const rq=s.openCursor();rq.onsuccess=e=>{const c=e.target.result;if(c){out[c.key]=c.value;c.continue()}else res(out)};rq.onerror=()=>rej(rq.error)})}
+async function clearPhotos(){const db=await dbOpen();return new Promise((res,rej)=>{const tx=db.transaction(DB_STORE,"readwrite");tx.objectStore(DB_STORE).clear();tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
+
+function load(){
+  const raw=localStorage.getItem(KEY);
+  if(raw){try{const x=JSON.parse(raw);state.foods=x.foods||[];state.fav=new Set(x.fav||[]);state.foods.forEach(f=>{if(!f.photo&&photoMap[f.name])f.photo=photoMap[f.name]})}catch(e){makeData()}}
+  else makeData();
+  document.title=localStorage.getItem(NAMEKEY)||"세계 과일도감";
+  parent=localStorage.getItem(PARENTKEY)==="on";
+}
+function save(){localStorage.setItem(KEY,JSON.stringify({foods:state.foods,fav:[...state.fav]}));}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+function cats(){return ["전체","열대","온대","아열대·열대","건조·사막","온대·지중해성","⭐ 즐겨찾기"];}
+function cardPhoto(f){return f.photo?`<img src="${esc(f.photo)}" alt="${esc(f.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="no-photo" style="display:none">📷 사진을 등록해 보세요</div>`:`<div class="no-photo">📷 사진을 등록해 보세요<br>${esc(f.emoji)}</div>`}
+function render(){
+  const q=document.getElementById("search").value.trim().toLowerCase();
+  document.getElementById("chips").innerHTML=cats().map(c=>`<button class="chip ${category===c?'on':''}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
+  document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{category=b.dataset.c;render()});
+  let list=state.foods.filter(f=>{
+    const match=!q || [f.name,f.en,f.countries,f.region,f.desc,f.korea,f.korArea].join(" ").toLowerCase().includes(q);
+    const c=category==="전체"||category==="⭐ 즐겨찾기"||f.zone.includes(category);
+    const fav=category!=="⭐ 즐겨찾기"||state.fav.has(f.id);
+    return match&&c&&fav;
+  });
+  document.getElementById("grid").innerHTML=list.map(f=>`
+  <article class="card" data-card="${f.id}">
+    <div class="fruitpic">${cardPhoto(f)}</div>
+    <h3>${esc(f.name)}</h3><div class="en">${esc(f.en)}</div>
+    <div class="tags"><span class="tag">🌱 ${esc(f.zone)}</span><span class="tag">🌍 ${esc(f.region)}</span></div>
+    <button class="fav ${state.fav.has(f.id)?'on':''}" data-id="${f.id}">${state.fav.has(f.id)?"⭐ 즐겨찾기 해제":"☆ 즐겨찾기 추가"}</button>
+  </article>`).join("");
+  document.querySelectorAll(".fav").forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.id;state.fav.has(id)?state.fav.delete(id):state.fav.add(id);save();render()});
+  document.querySelectorAll("[data-card]").forEach(b=>b.onclick=()=>openDetail(b.dataset.card));
+  document.getElementById("empty").hidden=list.length!==0;
+}
+async function openDetail(id){
+ const f=state.foods.find(x=>x.id===id); if(!f)return;
+ const local=await getPhoto(id).catch(()=> "");
+ const photo=local||f.photo;
+ const countryLinks=f.countries.split(",").map(c=>`<span class="country" data-country="${esc(c.trim())}">${esc(c.trim())}</span>`).join(", ");
+ document.getElementById("detail").innerHTML=`
+ <div class="detailpic">${photo?`<img src="${esc(photo)}" alt="${esc(f.name)}" onerror="this.style.display='none'"><div class="no-photo" style="display:none">📷 사진을 등록해 보세요</div>`:`<div class="no-photo">📷 아직 사진이 없어요<br>${esc(f.emoji)}</div>`}</div>
+ <h2>${esc(f.name)} <span class="en">${esc(f.en)}</span></h2>
+ <p>${esc(f.desc)}</p>
+ <div class="info">
+ <div class="box"><b>😋 맛과 특징</b>${esc(f.taste)}</div>
+ <div class="box"><b>🌱 자라는 환경</b>${esc(f.climate)}</div>
+ <div class="box"><b>🇰🇷 한국에서 생산될까요?</b>${esc(f.korea)}</div>
+ <div class="box"><b>📍 한국의 주요 생산 지역</b>${esc(f.korArea)}</div>
+ <div class="box"><b>🗓 자연 수확 시기</b>${esc(f.harvest)}</div>
+ <div class="box"><b>🌏 대륙·지역</b>${esc(f.region)}</div>
+ <div class="box wide"><b>🏳️ 대표 생산국</b>${countryLinks}</div>
+ <div class="box wide"><b>🍴 어떻게 먹을까요?</b>${esc(f.eat)}</div>
+ </div>
+ <div class="box wide" style="margin-top:9px"><b>🗺 세계 탐험</b> 생산국을 눌러 그 나라의 위치와 자연환경, 대표 특산품을 함께 살펴보세요.</div>
+ <div class="photo-actions">
+   <button class="btn" id="photoBtn">📷 사진 등록/바꾸기</button>
+   ${local?'<button class="btn" id="photoRemove">🗑️ 내가 등록한 사진 삭제</button>':''}
+ </div>
+ <div class="photo-note">인터넷에서 사진을 아이패드 사진 앱에 저장한 뒤 이 버튼으로 등록할 수 있어요. 등록한 사진은 이 기기에 저장됩니다.</div>
+ <div class="modal-actions"><button class="btn" id="detailFav">${state.fav.has(f.id)?"⭐ 즐겨찾기 해제":"☆ 즐겨찾기 추가"}</button>${parent?'<button class="btn" id="editFruit">✏️ 정보 수정</button>':''}<button class="btn" id="detailClose">닫기</button></div>`;
+ document.getElementById("detailDlg").showModal();
+ document.getElementById("detailClose").onclick=()=>document.getElementById("detailDlg").close();
+ document.getElementById("detailFav").onclick=()=>{state.fav.has(f.id)?state.fav.delete(f.id):state.fav.add(f.id);save();openDetail(id);render()};
+ document.querySelectorAll("[data-country]").forEach(b=>b.onclick=()=>openCountry(b.dataset.country));
+ document.getElementById("photoBtn").onclick=()=>{photoTarget=id;document.getElementById("photoInput").click()};
+ if(document.getElementById("photoRemove"))document.getElementById("photoRemove").onclick=async()=>{await putPhoto(id,"");document.getElementById("detailDlg").close();openDetail(id);render()};
+ if(parent)document.getElementById("editFruit").onclick=()=>openEdit(id);
+}
+function openDiscover(){
+ document.getElementById("discoverBox").innerHTML=`
+ <h2>🗺️ 새로운 과일 발견</h2>
+ <p class="small">먼저 지역이나 나라를 골라 보세요. 이미 도감에 있는 과일은 회색으로 표시하고 선택할 수 없게 했어요. 아직 등록하지 않은 과일은 바로 도감에 추가할 수 있어요.</p>
+ <div class="modal-actions">
+ <button class="btn" id="regionMode">🌍 지역으로 찾기</button><button class="btn" id="countryMode">🏳️ 나라로 찾기</button>
+ </div><div id="discoverContent"></div><div class="modal-actions"><button class="btn" id="discoverClose">닫기</button></div>`;
+ document.getElementById("discoverDlg").showModal();
+ document.getElementById("discoverClose").onclick=()=>document.getElementById("discoverDlg").close();
+ document.getElementById("regionMode").onclick=()=>showDiscover("region");
+ document.getElementById("countryMode").onclick=()=>showDiscover("country");
+ showDiscover("region");
+}
+function showDiscover(mode){
+ const content=document.getElementById("discoverContent");
+ if(mode==="region"){
+   const regions=[...new Set(extra.map(x=>x[4]))];
+   content.innerHTML='<div class="section-title">지역을 선택하세요</div>'+regions.map(r=>`<button class="chip" data-r="${esc(r)}">${esc(r)}</button>`).join(" ");
+   content.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>showDiscoverList("region",b.dataset.r));
+ }else{
+   const countries=[...new Set(extra.flatMap(x=>x[5].split(",").map(s=>s.trim())))].sort();
+   content.innerHTML='<div class="section-title">나라를 선택하세요</div>'+countries.map(c=>`<button class="chip" data-c="${esc(c)}">${esc(c)}</button>`).join(" ");
+   content.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>showDiscoverList("country",b.dataset.c));
+ }
+}
+function showDiscoverList(mode,key){
+ const arr=extra.filter(x=>mode==="region"?x[4]===key:x[5].split(",").map(s=>s.trim()).includes(key));
+ const registered=state.foods.map(f=>f.name);
+ document.getElementById("discoverContent").innerHTML=`
+ <div class="section-title">${mode==="region"?"🌍 "+esc(key):"🏳️ "+esc(key)}에서 만날 수 있는 과일</div>
+ <div class="discover-list">${arr.map(x=>{
+   const exists=registered.includes(x[0]);
+   return `<div class="discover-row ${exists?'disabled':''}"><div><div class="name">${esc(x[0])}</div><div class="meta">${esc(x[1])} · ${esc(x[3])}</div></div><button class="btn" ${exists?'disabled':''} data-add="${esc(x[0])}">${exists?'✓ 이미 등록됨':'＋ 도감에 등록'}</button></div>`
+ }).join("")}</div>
+ <div class="modal-actions"><button class="btn" id="backDiscover">← 다시 선택</button></div>`;
+ document.querySelectorAll("[data-add]").forEach(b=>b.onclick=()=>addDiscovered(b.dataset.add));
+ document.getElementById("backDiscover").onclick=()=>showDiscover(mode);
+}
+function addDiscovered(name){
+ const x=extra.find(v=>v[0]===name);if(!x)return;
+ if(state.foods.some(f=>f.name===name))return;
+ const id="f"+Date.now();
+ state.foods.push({id,name:x[0],en:x[1],emoji:x[2],zone:x[3],region:x[4],countries:x[5],desc:`${x[0]}는 ${x[4]} 지역에서 알려진 과일이에요. 아직 도감의 상세 정보를 더 채워가는 중입니다. 부모님 모드에서 설명을 보완할 수 있어요.`,taste:"맛과 식감은 품종과 익은 정도에 따라 달라요.",climate:"주로 "+x[3]+" 환경에서 재배됩니다.",eat:"품종과 지역에 따라 생으로 먹거나 음료·디저트 등에 이용합니다.",korea:"확인 필요",korArea:"추가 정보가 필요해요.",harvest:"지역과 품종에 따라 달라요.",photo:photoMap[name]||"",custom:true});
+ save();alert(name+"을(를) 도감에 등록했어요!");document.getElementById("discoverDlg").close();render();openDetail(id);
+}
+function openCountry(name){
+ const x=countryInfo[name]||["정보 준비 중","-","-","과일·농산물","이 나라의 더 자세한 정보를 다음 자료에서 보완할 수 있어요."];
+ document.getElementById("countryBox").innerHTML=`<h2>🏳️ ${esc(name)}</h2>
+ <div class="info">
+ <div class="box"><b>📍 위치</b>${esc(x[0])}</div><div class="box"><b>📐 면적</b>${esc(x[1])}</div>
+ <div class="box"><b>👥 인구</b>${esc(x[2])}</div><div class="box"><b>🌾 대표 특산품</b>${esc(x[3])}</div>
+ <div class="box wide"><b>📚 간단한 역사·특징</b>${esc(x[4])}</div></div>
+ <div class="section-title">🍎 이 나라와 연결된 과일</div><div class="tags">${state.foods.filter(f=>f.countries.split(",").map(v=>v.trim()).includes(name)).map(f=>`<button class="chip" data-countryfruit="${esc(f.id)}">${esc(f.emoji)} ${esc(f.name)}</button>`).join("")||'<span class="small">현재 도감에 등록된 연결 과일이 아직 없어요.</span>'}</div>
+ <div class="modal-actions"><button class="btn" id="countryClose">닫기</button></div>`;
+ document.getElementById("countryDlg").showModal();document.getElementById("countryClose").onclick=()=>document.getElementById("countryDlg").close(); document.querySelectorAll("[data-countryfruit]").forEach(b=>b.onclick=()=>{document.getElementById("countryDlg").close();openDetail(b.dataset.countryfruit)});
+}
+function openParent(){
+ if(parent){document.getElementById("bookName").value=localStorage.getItem(NAMEKEY)||"세계 과일도감";document.getElementById("pin").value="";document.getElementById("parentDlg").showModal();return;}
+ const p=prompt("부모님 모드 PIN을 입력하세요.");
+ const saved=localStorage.getItem(PINKEY)||"1234";
+ if(p===saved){parent=true;localStorage.setItem(PARENTKEY,"on");updateParent()}else if(p!==null)alert("PIN이 맞지 않아요.");
+}
+function updateParent(){
+ const b=document.getElementById("parentBtn");b.textContent=parent?"🔓 부모님 모드 · 켜짐":"🔒 부모님 모드 · 꺼짐";
+ document.getElementById("parentState").textContent=parent?"현재 부모님 모드가 켜져 있어요.":"현재 부모님 모드가 꺼져 있어요.";
+ document.getElementById("parentState").className="parent-state "+(parent?"onstate":"offstate");render();
+}
+function openEdit(id){
+ const f=state.foods.find(x=>x.id===id);
+ document.getElementById("editBox").innerHTML=`<h2>✏️ 과일 정보 수정</h2>
+ <label>과일 이름</label><input id="eName" value="${esc(f.name)}"><label>영어 이름</label><input id="eEn" value="${esc(f.en)}">
+ <label>기본 설명</label><textarea id="eDesc">${esc(f.desc)}</textarea><label>맛과 특징</label><textarea id="eTaste">${esc(f.taste)}</textarea>
+ <label>자라는 환경</label><input id="eClimate" value="${esc(f.climate)}"><label>대표 생산국</label><input id="eCountries" value="${esc(f.countries)}">
+ <label>한국 생산 여부</label><input id="eKorea" value="${esc(f.korea)}"><label>한국 주요 생산 지역</label><input id="eKorArea" value="${esc(f.korArea)}"><label>자연 수확 시기</label><input id="eHarvest" value="${esc(f.harvest)}">
+ <label>먹는 방법</label><textarea id="eEat">${esc(f.eat)}</textarea>
+ <div class="modal-actions"><button class="btn" id="editCancel">취소</button><button class="btn" id="editSave">저장</button></div>`;
+ document.getElementById("editDlg").showModal();
+ document.getElementById("editCancel").onclick=()=>document.getElementById("editDlg").close();
+ document.getElementById("editSave").onclick=()=>{f.name=document.getElementById("eName").value.trim()||f.name;f.en=document.getElementById("eEn").value.trim();f.desc=document.getElementById("eDesc").value.trim();f.taste=document.getElementById("eTaste").value.trim();f.climate=document.getElementById("eClimate").value.trim();f.countries=document.getElementById("eCountries").value.trim();f.korea=document.getElementById("eKorea").value.trim();f.korArea=document.getElementById("eKorArea").value.trim();f.harvest=document.getElementById("eHarvest").value.trim();f.eat=document.getElementById("eEat").value.trim();save();document.getElementById("editDlg").close();document.getElementById("detailDlg").close();render();};
+}
+const mapCountries={
+"대한민국":[127.8,37.5],"중국":[104,35],"인도":[78,22],"인도네시아":[118,-2],"태국":[101,15],"베트남":[108,16],"필리핀":[122,13],"말레이시아":[102,4],"튀르키예":[35,39],"이란":[53,32],"인도네시아":[118,-2],"브라질":[-52,-10],"멕시코":[-102,23],"미국":[-100,40],"에콰도르":[-78,-1],"콜롬비아":[-74,4],"페루":[-75,-10],"이탈리아":[12,42],"프랑스":[2,46],"스페인":[-4,40],"그리스":[22,39],"뉴질랜드":[174,-41],"남아프리카공화국":[24,-30],"마다가스카르":[47,-20],"코스타리카":[-84,10],"도미니카공화국":[-70,19]
+};
+function geoXY(lon,lat){return [((lon+180)/360)*920,((90-lat)/180)*430]}
+function openMap(){
+ const names=Object.keys(mapCountries);
+ document.getElementById("mapBox").innerHTML=`<h2>🌍 세계지도 탐험</h2><p class="maphint">과일이 많이 자라는 나라를 지도에서 찾아보세요. 🟠 표시를 누르면 그 나라의 정보와 이 도감에 연결된 과일을 볼 수 있어요.</p>
+ <div class="mapwrap"><svg class="worldmap" viewBox="0 0 920 430" role="img" aria-label="세계지도 학습용 지도">
+ <rect class="ocean" x="0" y="0" width="920" height="430" rx="14"/>
+ <path class="land" d="M92 93 L145 57 L205 62 L246 93 L259 142 L224 166 L190 150 L153 168 L121 145 L88 143 Z"/><path class="land" d="M250 180 L294 176 L329 198 L318 232 L287 250 L272 295 L245 341 L216 337 L204 303 L218 269 L235 238 Z"/>
+ <path class="land" d="M420 72 L474 48 L535 58 L574 90 L568 139 L532 153 L508 132 L474 146 L443 128 L414 112 Z"/><path class="land" d="M522 157 L577 160 L626 188 L641 226 L614 260 L581 250 L557 223 L531 208 Z"/>
+ <path class="land" d="M675 78 L733 57 L790 70 L832 106 L824 141 L779 151 L742 134 L710 150 L679 126 Z"/><path class="land" d="M704 161 L759 169 L789 201 L775 234 L741 248 L715 224 Z"/>
+ <path class="land" d="M820 300 L858 293 L885 316 L874 341 L840 347 L817 330 Z"/>
+ ${names.map(n=>{const [lon,lat]=mapCountries[n], [x,y]=geoXY(lon,lat); return `<circle class="mapdot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="6" data-mapcountry="${esc(n)}"><title>${esc(n)}</title></circle>`}).join('')}
+ </svg></div><div class="section-title">🧭 주요 나라 바로가기</div><div class="mapchips">${names.slice(0,18).map(n=>`<button class="mapchip" data-mapchip="${esc(n)}">${esc(n)}</button>`).join('')}</div>
+ <div class="modal-actions"><button class="btn" id="mapClose">닫기</button></div>`;
+ document.getElementById("mapDlg").showModal();
+ document.getElementById("mapClose").onclick=()=>document.getElementById("mapDlg").close();
+ document.querySelectorAll('[data-mapcountry],[data-mapchip]').forEach(el=>el.onclick=()=>{const n=el.dataset.mapcountry||el.dataset.mapchip;openCountry(n);});
+}
+function backupOpen(){document.getElementById("backupDlg").showModal()}
+document.getElementById("discoverBtn").onclick=openDiscover;
+document.getElementById("mapBtn").onclick=openMap;
+document.getElementById("parentBtn").onclick=openParent;
+document.getElementById("backupBtn").onclick=backupOpen;
+document.getElementById("search").oninput=render;
+document.getElementById("parentClose").onclick=()=>document.getElementById("parentDlg").close();
+document.getElementById("parentSave").onclick=()=>{
+ const n=document.getElementById("bookName").value.trim();if(n){localStorage.setItem(NAMEKEY,n);document.getElementById("appTitle").textContent="🌎 "+n;document.title=n}
+ const p=document.getElementById("pin").value.trim();if(p){localStorage.setItem(PINKEY,p);alert("도감 이름과 PIN을 저장했어요.")}
+ document.getElementById("parentDlg").close();updateParent();
+};
+document.getElementById("backupClose").onclick=()=>document.getElementById("backupDlg").close();
+
+document.getElementById("photoInput").onchange=async e=>{
+ const file=e.target.files[0];if(!file||!photoTarget)return;
+ const reader=new FileReader();reader.onload=async()=>{await putPhoto(photoTarget,reader.result);document.getElementById("photoInput").value="";const id=photoTarget;photoTarget=null;document.getElementById("detailDlg").close();render();openDetail(id)};reader.readAsDataURL(file);
+};
+
+document.getElementById("exportBtn").onclick=async()=>{
+ const photos=await allPhotos();const payload={version:2,name:localStorage.getItem(NAMEKEY)||"세계 과일도감",foods:state.foods,fav:[...state.fav],photos};
+ const blob=new Blob([JSON.stringify(payload)],{type:"application/json"}),a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);a.download="세계과일도감_V2_백업.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+document.getElementById("importBtn").onclick=()=>document.getElementById("file").click();
+document.getElementById("file").onchange=async e=>{
+ const file=e.target.files[0];if(!file)return;const r=new FileReader();
+ r.onload=async()=>{try{const x=JSON.parse(r.result);if(!x.foods)throw 0;state.foods=x.foods;state.fav=new Set(x.fav||[]);if(x.name)localStorage.setItem(NAMEKEY,x.name);await clearPhotos();for(const [id,data] of Object.entries(x.photos||{}))await putPhoto(id,data);save();document.getElementById("appTitle").textContent="🌎 "+(x.name||"세계 과일도감");render();alert("복원이 완료되었습니다.");}catch(err){alert("백업 파일을 읽지 못했어요.");}};
+ r.readAsText(file);e.target.value="";
+};
+
+load();document.getElementById("appTitle").textContent="🌎 "+(localStorage.getItem(NAMEKEY)||"세계 과일도감");
+document.getElementById("daily").innerHTML="<b>🗺️ 새로운 과일을 찾아보세요</b>지역이나 나라를 먼저 고르면, 그곳에서 만날 수 있는 과일을 찾아 도감에 하나씩 추가할 수 있어요. 이미 등록된 과일은 중복 등록되지 않아요.";
+updateParent();
+</script>
+</body></html>
