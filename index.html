@@ -12,7 +12,7 @@
 *{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Noto Sans KR",sans-serif;color:var(--ink);background:#f7f3e8}
 header{position:sticky;top:0;z-index:20;background:var(--yellow);border-bottom:1px solid #e6d889;padding:12px 14px calc(10px + env(safe-area-inset-top))}
 .head{max-width:1050px;margin:auto}.title{font-size:31px;font-weight:900;margin-bottom:7px}.subtitle{font-size:13px;color:#665f3b;margin-bottom:10px}
-.actions{display:flex;gap:7px;flex-wrap:wrap}.btn{border:1px solid #d7c873;background:#fffef4;border-radius:12px;padding:10px 12px;font-weight:800;font-size:16px}.btn:active{transform:scale(.98)}
+.actions{display:flex;gap:7px;flex-wrap:wrap}.btn.danger{font-weight:800}.btn{border:1px solid #d7c873;background:#fffef4;border-radius:12px;padding:10px 12px;font-weight:800;font-size:16px}.btn:active{transform:scale(.98)}
 main{max-width:1050px;margin:auto;padding:14px}.notice{background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px;margin-bottom:12px}.notice b{display:block;margin-bottom:4px}
 .controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.search{flex:1;min-width:220px;padding:12px 13px;border:1px solid var(--line);border-radius:12px;font-size:18px;background:#fff}
 .chips{display:flex;gap:7px;overflow:auto;padding-bottom:4px;margin-bottom:14px}.chip{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 12px;font-weight:900;font-size:16px}.chip.on{background:#dff0e3;border-color:#a8ceb2}
@@ -271,12 +271,15 @@ function cats(){return ["전체","열대","온대","아열대·열대","건조·
 function cardPhoto(f,localPhoto){
   const p=localPhoto||f.photo||"";
   return p
-    ? `<img loading="lazy" decoding="async" fetchpriority="low" data-img="${esc(p)}" alt="${esc(f.name)}">
+    ? `<img loading="lazy" decoding="async" fetchpriority="low" data-img="${esc(p)}" data-img-fallback="${esc(f.emoji)}" alt="${esc(f.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
        <div class="no-photo" style="display:none">📷 사진을 등록해 보세요<br>${esc(f.emoji)}</div>`
     : `<div class="no-photo">📷 아직 사진이 없어요<br><span style="font-size:54px">${esc(f.emoji)}</span></div>`;
 }
+let renderSerial=0;
 async function render(){
+  const myRender=++renderSerial;
   const localPhotos=await allPhotos().catch(()=>({}));
+  if(myRender!==renderSerial)return;
   const q=document.getElementById("search").value.trim().toLowerCase();
   document.getElementById("chips").innerHTML=cats().map(c=>`<button class="chip ${category===c?'on':''}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
   document.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{category=b.dataset.c;render()});
@@ -326,6 +329,29 @@ function setupLazyImages(){
   }
 }
 
+
+async function deleteFruit(id){
+  if(!parent){
+    alert("과일 삭제는 부모님 모드에서만 할 수 있어요.");
+    return;
+  }
+  const target=state.foods.find(x=>x.id===id);
+  if(!target)return;
+
+  const ok=confirm(`"${target.name}"을(를) 도감에서 삭제할까요?\n\n삭제하면 이 과일의 등록 정보와 사진도 함께 삭제됩니다.`);
+  if(!ok)return;
+
+  state.foods=state.foods.filter(x=>x.id!==id);
+  await deletePhoto(id).catch(()=>{});
+  save();
+
+  const dlg=document.getElementById("detailDlg");
+  if(dlg && dlg.open)dlg.close();
+
+  await render();
+  alert(`"${target.name}"이(가) 삭제되었습니다.`);
+}
+
 async function openDetail(id){
  const f=state.foods.find(x=>x.id===id); if(!f)return;
  const local=await getPhoto(id).catch(()=> "");
@@ -353,7 +379,8 @@ async function openDetail(id){
  <div class="box wide" style="margin-top:9px">
    <b>🗺 세계 탐험</b>
    생산국을 눌러 그 나라의 위치와 자연환경, 대표 특산품을 함께 살펴보세요.
-   <div style="margin-top:9px"><button class="btn" id="goWorldMap">🌍 세계탐험 하러가기</button></div>
+   <div style="margin-top:9px"><button class="btn" id="goWorldMap">🌍 세계탐험 하러가기</button>
+      <button class="btn danger" id="deleteFruitBtn" style="display:none">🗑️ 이 과일 삭제</button></div>
  </div>
  <div class="photo-actions">
    <button class="btn" id="photoBtn">📷 사진 등록/바꾸기</button>
@@ -366,6 +393,11 @@ async function openDetail(id){
  document.getElementById("detailFav").onclick=()=>{state.fav.has(f.id)?state.fav.delete(f.id):state.fav.add(f.id);save();openDetail(id);render()};
  document.querySelectorAll("[data-country]").forEach(b=>b.onclick=()=>openCountry(b.dataset.country));
  document.getElementById("goWorldMap").onclick=()=>{document.getElementById("detailDlg").close();openMap();};
+const deleteBtn=document.getElementById("deleteFruitBtn");
+if(deleteBtn){
+  deleteBtn.style.display=parent ? "inline-flex" : "none";
+  deleteBtn.onclick=()=>deleteFruit(id);
+}
  document.getElementById("photoBtn").onclick=()=>{photoTarget=id;document.getElementById("photoInput").click()};
  if(document.getElementById("photoRemove"))document.getElementById("photoRemove").onclick=async()=>{await putPhoto(id,"");document.getElementById("detailDlg").close();openDetail(id);render()};
  if(parent)document.getElementById("editFruit").onclick=()=>openEdit(id);
@@ -619,5 +651,6 @@ document.getElementById("file").onchange=async e=>{
 load();document.getElementById("appTitle").textContent="🌎 "+(localStorage.getItem(NAMEKEY)||"세계 과일도감");
 document.getElementById("daily").innerHTML="<b>🗺️ 새로운 과일을 찾아보세요</b>지역이나 나라를 먼저 고르면, 그곳에서 만날 수 있는 과일을 찾아 도감에 하나씩 추가할 수 있어요. 이미 등록된 과일은 중복 등록되지 않아요.";
 updateParent();
+render();
 </script>
 </body></html>
