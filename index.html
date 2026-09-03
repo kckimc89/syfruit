@@ -298,7 +298,6 @@ async function render(){
   document.getElementById("empty").hidden=list.length!==0;
   loadVisibleImages();
 }
-}
 
 let imageLoadToken=0;
 async function loadVisibleImages(){
@@ -580,9 +579,9 @@ document.getElementById("photoInput").onchange=async e=>{
 };
 
 document.getElementById("exportBtn").onclick=async()=>{
- const photos=await allPhotos();const payload={version:7,name:localStorage.getItem(NAMEKEY)||"세계 과일도감",foods:state.foods,fav:[...state.fav],photos};
+ const photos=await allPhotos();const payload={version:8,name:localStorage.getItem(NAMEKEY)||"세계 과일도감",foods:state.foods,fav:[...state.fav],photos};
  const blob=new Blob([JSON.stringify(payload)],{type:"application/json"}),a=document.createElement("a");
- a.href=URL.createObjectURL(blob);a.download="세계과일도감_V7_백업.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+ a.href=URL.createObjectURL(blob);a.download="세계과일도감_V8_백업.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 };
 document.getElementById("importBtn").onclick=()=>document.getElementById("file").click();
 document.getElementById("file").onchange=async e=>{
