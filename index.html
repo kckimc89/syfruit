@@ -257,9 +257,7 @@ function render(){
   document.querySelectorAll("[data-card]").forEach(b=>b.onclick=()=>openDetail(b.dataset.card));
   document.getElementById("empty").hidden=list.length!==0;
 }
-async 
-
-function openDetail(id){
+async function openDetail(id){
  const f=state.foods.find(x=>x.id===id); if(!f)return;
  const local=await getPhoto(id).catch(()=> "");
  const photo=local||f.photo;
