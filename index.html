@@ -18,7 +18,7 @@ main{max-width:1050px;margin:auto;padding:14px}.notice{background:#fff;border:1p
 .chips{display:flex;gap:7px;overflow:auto;padding-bottom:4px;margin-bottom:14px}.chip{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 11px;font-weight:800}.chip.on{background:#dff0e3;border-color:#a8ceb2}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;box-shadow:0 2px 7px #0000000b;cursor:pointer}
-.fruitpic{height:150px;border-radius:14px;background:linear-gradient(135deg,#fff9e9,#f0f7ee);display:flex;align-items:center;justify-content:center;font-size:78px;overflow:hidden}.fruitpic img{width:100%;height:100%;object-fit:cover}.no-photo{font-size:13px;color:#7c857e;font-weight:800;text-align:center}.card h3{margin:10px 0 4px;font-size:20px}.en{font-size:12px;color:var(--muted);font-weight:700}.tags{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.tag{font-size:12px;background:#f1f6f2;border-radius:999px;padding:5px 7px}
+.fruitpic{height:175px;border-radius:14px;background:linear-gradient(135deg,#fff9e9,#f0f7ee);display:flex;align-items:center;justify-content:center;font-size:78px;overflow:hidden}.fruitpic img{width:100%;height:100%;object-fit:cover}.no-photo{font-size:13px;color:#7c857e;font-weight:800;text-align:center}.card h3{margin:10px 0 4px;font-size:20px}.en{font-size:12px;color:var(--muted);font-weight:700}.tags{display:flex;gap:5px;flex-wrap:wrap;margin:8px 0}.tag{font-size:12px;background:#f1f6f2;border-radius:999px;padding:5px 7px}
 .fav{width:100%;border:1px solid #d8d1b9;background:#fffdf5;border-radius:10px;padding:8px;font-weight:800;cursor:pointer}.fav.on{background:#fff3b7}
 .empty{text-align:center;padding:40px;color:var(--muted)}
 dialog{width:min(800px,95vw);max-height:92vh;border:0;border-radius:20px;padding:0;box-shadow:0 20px 60px #0005}dialog::backdrop{background:#0007}.modal{padding:18px}.modal h2{margin-top:0}.detailpic{height:260px;border-radius:16px;background:#f2f6ed;display:flex;align-items:center;justify-content:center;font-size:100px;overflow:hidden}.detailpic img{width:100%;height:100%;object-fit:cover}.info{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}.box{background:#faf8ef;border:1px solid var(--line);border-radius:12px;padding:10px;line-height:1.55}.box b{display:block;margin-bottom:5px}.wide{grid-column:1/-1}.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:15px;flex-wrap:wrap}
@@ -29,7 +29,18 @@ label{display:block;font-weight:800;margin:10px 0 5px}input,textarea,select{widt
 
 .mapwrap{background:#dff1f6;border:1px solid #b9dce5;border-radius:18px;padding:10px;overflow:hidden}.worldmap{width:100%;height:auto;display:block}.land{fill:#d9e7c8;stroke:#8aa67a;stroke-width:1}.ocean{fill:#dff1f6}.mapdot{fill:#f2a43a;stroke:#fff;stroke-width:2;cursor:pointer}.mapdot.reg{fill:#5b8fc9}.maplabel{font-size:10px;font-weight:900;fill:#31434b;pointer-events:none}.maphint{font-size:12px;color:#5c6b70;line-height:1.5;margin:8px 2px}.mapchips{display:flex;gap:6px;overflow:auto;margin:8px 0}.mapchip{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-weight:800}.mapchip.on{background:#dff0e3}
 .photo-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}.photo-note{font-size:12px;color:var(--muted);margin-top:5px}
-@media(max-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.fruitpic{height:120px;font-size:60px}.card{padding:9px}.card h3{font-size:17px}.info{grid-template-columns:1fr}.wide{grid-column:auto}.detailpic{height:210px}}
+@media(max-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.fruitpic{height:145px;font-size:60px}.card{padding:9px}.card h3{font-size:17px}.info{grid-template-columns:1fr}.wide{grid-column:auto}.detailpic{height:210px}}
+
+.photo-first{background:#eef6ff;border:1px solid #c8dced;border-radius:14px;padding:11px 12px;margin-bottom:12px;line-height:1.55}
+.photo-first b{display:block;margin-bottom:3px}
+.data-note{background:#f7f7f7;border:1px dashed #cfcfcf;border-radius:12px;padding:10px;line-height:1.55;color:#59636a}
+
+.korea-info-card{margin-top:14px;padding:15px;border-radius:16px;background:#f0f7ee;border:1px solid #cfe1c9}
+.korea-info-card h3{margin:0 0 9px;font-size:18px}
+.korea-status{display:inline-block;padding:5px 10px;border-radius:999px;font-weight:700;background:#fff;margin-bottom:8px}
+.korea-status.yes{color:#2f6b2f;border:1px solid #9bc79b}
+.korea-status.no{color:#8a4a32;border:1px solid #ddb39f}
+.korea-info-text{line-height:1.6}
 </style>
 </head>
 <body>
@@ -87,36 +98,36 @@ let state={foods:[],fav:new Set()};
 let category="전체", parent=false, photoTarget=null;
 
 const photoMap={
-"사과":"https://commons.wikimedia.org/wiki/Special:FilePath/Apple%20fruit.jpg?width=900",
-"바나나":"https://commons.wikimedia.org/wiki/Special:FilePath/Banana%20Fruit.JPG?width=900",
-"오렌지":"https://commons.wikimedia.org/wiki/Special:FilePath/Orange%20fruit.jpg?width=900",
-"딸기":"https://commons.wikimedia.org/wiki/Special:FilePath/Strawberries.jpg?width=900",
-"포도":"https://commons.wikimedia.org/wiki/Special:FilePath/Grapes.jpg?width=900",
-"수박":"https://commons.wikimedia.org/wiki/Special:FilePath/Watermelon.jpg?width=900",
-"파인애플":"https://commons.wikimedia.org/wiki/Special:FilePath/Pineapple.jpg?width=900",
-"망고":"https://commons.wikimedia.org/wiki/Special:FilePath/Mangoes.jpg?width=900",
-"키위":"https://commons.wikimedia.org/wiki/Special:FilePath/Kiwifruit.jpg?width=900",
-"석류":"https://commons.wikimedia.org/wiki/Special:FilePath/Pomegranate.jpg?width=900",
-"코코넛":"https://commons.wikimedia.org/wiki/Special:FilePath/Coconut.jpg?width=900",
-"용과":"https://commons.wikimedia.org/wiki/Special:FilePath/Dragon%20fruit.JPG?width=900",
-"망고스틴":"https://commons.wikimedia.org/wiki/Special:FilePath/Mangosteen%20Fruit.jpg?width=900",
-"람부탄":"https://commons.wikimedia.org/wiki/Special:FilePath/Rambutan.jpg?width=900",
-"두리안":"https://commons.wikimedia.org/wiki/Special:FilePath/Durian.jpg?width=900",
-"패션프루트":"https://commons.wikimedia.org/wiki/Special:FilePath/Passionfruit.jpg?width=900",
-"파파야":"https://commons.wikimedia.org/wiki/Special:FilePath/Papaya.jpg?width=900",
-"구아바":"https://commons.wikimedia.org/wiki/Special:FilePath/Guava.jpg?width=900",
-"리치":"https://commons.wikimedia.org/wiki/Special:FilePath/Lychee.jpg?width=900",
-"감":"https://commons.wikimedia.org/wiki/Special:FilePath/Persimmon.jpg?width=900",
-"복숭아":"https://commons.wikimedia.org/wiki/Special:FilePath/Peaches.jpg?width=900",
-"배":"https://commons.wikimedia.org/wiki/Special:FilePath/Pears.jpg?width=900",
-"레몬":"https://commons.wikimedia.org/wiki/Special:FilePath/Lemon.jpg?width=900",
-"블루베리":"https://commons.wikimedia.org/wiki/Special:FilePath/Blueberries.jpg?width=900",
-"체리":"https://commons.wikimedia.org/wiki/Special:FilePath/Cherry.jpg?width=900",
-"무화과":"https://commons.wikimedia.org/wiki/Special:FilePath/Fig%20fruit.jpg?width=900",
-"대추야자":"https://commons.wikimedia.org/wiki/Special:FilePath/Dates.jpg?width=900",
-"아보카도":"https://commons.wikimedia.org/wiki/Special:FilePath/Avocado.jpg?width=900",
-"스타프루트":"https://commons.wikimedia.org/wiki/Special:FilePath/Carambola.jpg?width=900",
-"잭프루트":"https://commons.wikimedia.org/wiki/Special:FilePath/Jackfruit.jpg?width=900"
+"사과":"https://commons.wikimedia.org/wiki/Special:FilePath/Apple%20fruit.jpg?width=480",
+"바나나":"https://commons.wikimedia.org/wiki/Special:FilePath/Banana%20Fruit.JPG?width=480",
+"오렌지":"https://commons.wikimedia.org/wiki/Special:FilePath/Orange%20fruit.jpg?width=480",
+"딸기":"https://commons.wikimedia.org/wiki/Special:FilePath/Strawberries.jpg?width=480",
+"포도":"https://commons.wikimedia.org/wiki/Special:FilePath/Grapes.jpg?width=480",
+"수박":"https://commons.wikimedia.org/wiki/Special:FilePath/Watermelon.jpg?width=480",
+"파인애플":"https://commons.wikimedia.org/wiki/Special:FilePath/Pineapple.jpg?width=480",
+"망고":"https://commons.wikimedia.org/wiki/Special:FilePath/Mangoes.jpg?width=480",
+"키위":"https://commons.wikimedia.org/wiki/Special:FilePath/Kiwifruit.jpg?width=480",
+"석류":"https://commons.wikimedia.org/wiki/Special:FilePath/Pomegranate.jpg?width=480",
+"코코넛":"https://commons.wikimedia.org/wiki/Special:FilePath/Coconut.jpg?width=480",
+"용과":"https://commons.wikimedia.org/wiki/Special:FilePath/Dragon%20fruit.JPG?width=480",
+"망고스틴":"https://commons.wikimedia.org/wiki/Special:FilePath/Mangosteen%20Fruit.jpg?width=480",
+"람부탄":"https://commons.wikimedia.org/wiki/Special:FilePath/Rambutan.jpg?width=480",
+"두리안":"https://commons.wikimedia.org/wiki/Special:FilePath/Durian.jpg?width=480",
+"패션프루트":"https://commons.wikimedia.org/wiki/Special:FilePath/Passionfruit.jpg?width=480",
+"파파야":"https://commons.wikimedia.org/wiki/Special:FilePath/Papaya.jpg?width=480",
+"구아바":"https://commons.wikimedia.org/wiki/Special:FilePath/Guava.jpg?width=480",
+"리치":"https://commons.wikimedia.org/wiki/Special:FilePath/Lychee.jpg?width=480",
+"감":"https://commons.wikimedia.org/wiki/Special:FilePath/Persimmon.jpg?width=480",
+"복숭아":"https://commons.wikimedia.org/wiki/Special:FilePath/Peaches.jpg?width=480",
+"배":"https://commons.wikimedia.org/wiki/Special:FilePath/Pears.jpg?width=480",
+"레몬":"https://commons.wikimedia.org/wiki/Special:FilePath/Lemon.jpg?width=480",
+"블루베리":"https://commons.wikimedia.org/wiki/Special:FilePath/Blueberries.jpg?width=480",
+"체리":"https://commons.wikimedia.org/wiki/Special:FilePath/Cherry.jpg?width=480",
+"무화과":"https://commons.wikimedia.org/wiki/Special:FilePath/Fig%20fruit.jpg?width=480",
+"대추야자":"https://commons.wikimedia.org/wiki/Special:FilePath/Dates.jpg?width=480",
+"아보카도":"https://commons.wikimedia.org/wiki/Special:FilePath/Avocado.jpg?width=480",
+"스타프루트":"https://commons.wikimedia.org/wiki/Special:FilePath/Carambola.jpg?width=480",
+"잭프루트":"https://commons.wikimedia.org/wiki/Special:FilePath/Jackfruit.jpg?width=480"
 };
 
 const base=[
@@ -218,7 +229,13 @@ function load(){
 function save(){localStorage.setItem(KEY,JSON.stringify({foods:state.foods,fav:[...state.fav]}));}
 function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
 function cats(){return ["전체","열대","온대","아열대·열대","건조·사막","온대·지중해성","⭐ 즐겨찾기"];}
-function cardPhoto(f){return f.photo?`<img src="${esc(f.photo)}" alt="${esc(f.name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><div class="no-photo" style="display:none">📷 사진을 등록해 보세요</div>`:`<div class="no-photo">📷 사진을 등록해 보세요<br>${esc(f.emoji)}</div>`}
+function cardPhoto(f){
+  return f.photo
+    ? `<img loading="lazy" decoding="async" src="${esc(f.photo)}" alt="${esc(f.name)}"
+         onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+       <div class="no-photo" style="display:none">📷 사진을 등록해 보세요<br>${esc(f.emoji)}</div>`
+    : `<div class="no-photo">📷 아직 사진이 없어요<br><span style="font-size:54px">${esc(f.emoji)}</span></div>`;
+}
 function render(){
   const q=document.getElementById("search").value.trim().toLowerCase();
   document.getElementById("chips").innerHTML=cats().map(c=>`<button class="chip ${category===c?'on':''}" data-c="${esc(c)}">${esc(c)}</button>`).join("");
@@ -240,7 +257,9 @@ function render(){
   document.querySelectorAll("[data-card]").forEach(b=>b.onclick=()=>openDetail(b.dataset.card));
   document.getElementById("empty").hidden=list.length!==0;
 }
-async function openDetail(id){
+async 
+
+function openDetail(id){
  const f=state.foods.find(x=>x.id===id); if(!f)return;
  const local=await getPhoto(id).catch(()=> "");
  const photo=local||f.photo;
@@ -252,9 +271,15 @@ async function openDetail(id){
  <div class="info">
  <div class="box"><b>😋 맛과 특징</b>${esc(f.taste)}</div>
  <div class="box"><b>🌱 자라는 환경</b>${esc(f.climate)}</div>
- <div class="box"><b>🇰🇷 한국에서 생산될까요?</b>${esc(f.korea)}</div>
- <div class="box"><b>📍 한국의 주요 생산 지역</b>${esc(f.korArea)}</div>
- <div class="box"><b>🗓 자연 수확 시기</b>${esc(f.harvest)}</div>
+ <div class="box wide korea-info-card">
+   <h3>🇰🇷 한국에서의 생산정보</h3>
+   <div class="korea-status ${/생산됨|재배됨|생산/.test(f.korea) && !/안.*생산|생산.*안|없음/.test(f.korea) ? "yes" : "no"}">${esc(f.korea)}</div>
+   <div class="korea-info-text">
+     ${/생산됨|재배됨|생산/.test(f.korea) && !/안.*생산|생산.*안|없음/.test(f.korea)
+       ? `주요 생산지역: ${esc(f.korArea)}<br>자연 수확시기: ${esc(f.harvest)}`
+       : `한국에서의 생산 여부: ${esc(f.korea)}<br>${esc(f.korArea)}<br>자연 수확시기: ${esc(f.harvest)}`}
+   </div>
+ </div>
  <div class="box"><b>🌏 대륙·지역</b>${esc(f.region)}</div>
  <div class="box wide"><b>🏳️ 대표 생산국</b>${countryLinks}</div>
  <div class="box wide"><b>🍴 어떻게 먹을까요?</b>${esc(f.eat)}</div>
@@ -264,7 +289,7 @@ async function openDetail(id){
    <button class="btn" id="photoBtn">📷 사진 등록/바꾸기</button>
    ${local?'<button class="btn" id="photoRemove">🗑️ 내가 등록한 사진 삭제</button>':''}
  </div>
- <div class="photo-note">인터넷에서 사진을 아이패드 사진 앱에 저장한 뒤 이 버튼으로 등록할 수 있어요. 등록한 사진은 이 기기에 저장됩니다.</div>
+ <div class="photo-note">사진은 도감 화면에서 알아보기 쉽도록 충분히 크게 보여줘요. 등록할 때는 자동으로 긴 변 800px 이하로 줄여 저장하므로 큰 원본 사진을 넣어도 저장공간 부담을 줄일 수 있어요.</div>
  <div class="modal-actions"><button class="btn" id="detailFav">${state.fav.has(f.id)?"⭐ 즐겨찾기 해제":"☆ 즐겨찾기 추가"}</button>${parent?'<button class="btn" id="editFruit">✏️ 정보 수정</button>':''}<button class="btn" id="detailClose">닫기</button></div>`;
  document.getElementById("detailDlg").showModal();
  document.getElementById("detailClose").onclick=()=>document.getElementById("detailDlg").close();
@@ -327,7 +352,7 @@ function openCountry(name){
  <div class="box"><b>👥 인구</b>${esc(x[2])}</div><div class="box"><b>🌾 대표 특산품</b>${esc(x[3])}</div>
  <div class="box wide"><b>📚 간단한 역사·특징</b>${esc(x[4])}</div></div>
  <div class="section-title">🍎 이 나라와 연결된 과일</div><div class="tags">${state.foods.filter(f=>f.countries.split(",").map(v=>v.trim()).includes(name)).map(f=>`<button class="chip" data-countryfruit="${esc(f.id)}">${esc(f.emoji)} ${esc(f.name)}</button>`).join("")||'<span class="small">현재 도감에 등록된 연결 과일이 아직 없어요.</span>'}</div>
- <div class="modal-actions"><button class="btn" id="countryClose">닫기</button></div>`;
+ <div class="data-note">📚 생산국·한국 재배지역·수확시기는 품종, 기후, 재배방식, 연도에 따라 달라질 수 있어요. 이 도감은 앞으로 공신력 있는 농업·국제통계 자료를 기준으로 항목별 검증·보완해 나가는 것을 목표로 합니다.</div><div class="modal-actions"><button class="btn" id="countryClose">닫기</button></div>`;
  document.getElementById("countryDlg").showModal();document.getElementById("countryClose").onclick=()=>document.getElementById("countryDlg").close(); document.querySelectorAll("[data-countryfruit]").forEach(b=>b.onclick=()=>{document.getElementById("countryDlg").close();openDetail(b.dataset.countryfruit)});
 }
 function openParent(){
@@ -347,7 +372,7 @@ function openEdit(id){
  <label>과일 이름</label><input id="eName" value="${esc(f.name)}"><label>영어 이름</label><input id="eEn" value="${esc(f.en)}">
  <label>기본 설명</label><textarea id="eDesc">${esc(f.desc)}</textarea><label>맛과 특징</label><textarea id="eTaste">${esc(f.taste)}</textarea>
  <label>자라는 환경</label><input id="eClimate" value="${esc(f.climate)}"><label>대표 생산국</label><input id="eCountries" value="${esc(f.countries)}">
- <label>한국 생산 여부</label><input id="eKorea" value="${esc(f.korea)}"><label>한국 주요 생산 지역</label><input id="eKorArea" value="${esc(f.korArea)}"><label>자연 수확 시기</label><input id="eHarvest" value="${esc(f.harvest)}">
+ <label>한국 생산 여부</label><input id="eKorea" value="${esc(f.korea)}"><label>주요 생산지역</label><input id="eKorArea" value="${esc(f.korArea)}"><label>자연 수확 시기</label><input id="eHarvest" value="${esc(f.harvest)}">
  <label>먹는 방법</label><textarea id="eEat">${esc(f.eat)}</textarea>
  <div class="modal-actions"><button class="btn" id="editCancel">취소</button><button class="btn" id="editSave">저장</button></div>`;
  document.getElementById("editDlg").showModal();
@@ -388,15 +413,37 @@ document.getElementById("parentSave").onclick=()=>{
 };
 document.getElementById("backupClose").onclick=()=>document.getElementById("backupDlg").close();
 
+async function compressPhoto(file){
+  const bitmap = await createImageBitmap(file);
+  const maxSide = 800;
+  const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+  const w = Math.max(1, Math.round(bitmap.width * scale));
+  const h = Math.max(1, Math.round(bitmap.height * scale));
+  const canvas = document.createElement("canvas");
+  canvas.width=w; canvas.height=h;
+  const ctx=canvas.getContext("2d",{alpha:false});
+  ctx.fillStyle="#ffffff"; ctx.fillRect(0,0,w,h);
+  ctx.drawImage(bitmap,0,0,w,h);
+  bitmap.close();
+  return canvas.toDataURL("image/jpeg",0.78);
+}
 document.getElementById("photoInput").onchange=async e=>{
  const file=e.target.files[0];if(!file||!photoTarget)return;
- const reader=new FileReader();reader.onload=async()=>{await putPhoto(photoTarget,reader.result);document.getElementById("photoInput").value="";const id=photoTarget;photoTarget=null;document.getElementById("detailDlg").close();render();openDetail(id)};reader.readAsDataURL(file);
+ try{
+   const data=await compressPhoto(file);
+   await putPhoto(photoTarget,data);
+   document.getElementById("photoInput").value="";
+   const id=photoTarget;photoTarget=null;
+   document.getElementById("detailDlg").close();render();openDetail(id);
+ }catch(err){
+   alert("사진을 최적화하지 못했어요. 다른 사진으로 다시 시도해 주세요.");
+ }
 };
 
 document.getElementById("exportBtn").onclick=async()=>{
- const photos=await allPhotos();const payload={version:2,name:localStorage.getItem(NAMEKEY)||"세계 과일도감",foods:state.foods,fav:[...state.fav],photos};
+ const photos=await allPhotos();const payload={version:5,name:localStorage.getItem(NAMEKEY)||"세계 과일도감",foods:state.foods,fav:[...state.fav],photos};
  const blob=new Blob([JSON.stringify(payload)],{type:"application/json"}),a=document.createElement("a");
- a.href=URL.createObjectURL(blob);a.download="세계과일도감_V2_백업.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+ a.href=URL.createObjectURL(blob);a.download="세계과일도감_V5_백업.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 };
 document.getElementById("importBtn").onclick=()=>document.getElementById("file").click();
 document.getElementById("file").onchange=async e=>{
