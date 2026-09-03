@@ -41,6 +41,7 @@ label{display:block;font-weight:800;margin:10px 0 5px}input,textarea,select{widt
 .korea-status.yes{color:#2f6b2f;border:1px solid #9bc79b}
 .korea-status.no{color:#8a4a32;border:1px solid #ddb39f}
 .korea-info-text{line-height:1.45;display:grid;grid-template-columns:minmax(150px,.7fr) 1fr 1fr;gap:8px 14px;align-items:center}.korea-line{background:#fff;border:1px solid #d8e6d2;border-radius:10px;padding:8px 10px}.korea-line b{display:inline;font-size:15px;margin:0 4px 0 0}.map-label-pop{position:absolute;transform:translate(-50%,-100%);margin-top:-10px;background:#fff;border:2px solid #4d8b62;border-radius:12px;padding:8px 10px;box-shadow:0 4px 12px #0003;z-index:5;white-space:nowrap;font-size:20px;font-weight:900;line-height:1.15}.map-label-pop button{margin-top:6px;width:100%;font-size:15px;padding:6px 8px}.mapcountry-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px}.mapcountry-name{font-size:18px;font-weight:900;padding:10px 8px;border:1px solid var(--line);background:#fff;border-radius:12px;text-align:center;cursor:pointer}.mapcountry-name:active{transform:scale(.98)}
+.country-fruit-tags{display:flex;flex-wrap:wrap;gap:8px}.country-fruit-btn{border-radius:14px;padding:10px 13px;font:inherit;font-weight:900;cursor:pointer;transition:transform .12s,opacity .12s}.country-fruit-btn:active{transform:scale(.97)}.country-fruit-btn.registered{background:#f1f1f1;color:#777;border:1px solid #d2d2d2;box-shadow:none}.country-fruit-btn.unregistered{background:#e8f5e9;color:#216b3a;border:2px solid #79b88a;box-shadow:0 2px 0 #b7d9bf}.country-fruit-btn.unregistered:hover{filter:brightness(.98)}
 
 .mapstage{position:relative;width:100%;line-height:0;border-radius:14px;overflow:hidden;background:#dff1f6}
 .worldmapimg{width:100%;height:auto;display:block}
@@ -100,7 +101,7 @@ const PARENTKEY="world_fruit_parent_v1";
 const PINKEY="world_fruit_parent_pin_v1";
 const DB_NAME="world_fruit_photos_v1", DB_STORE="photos";
 let state={foods:[],fav:new Set()};
-let category="전체", parent=false, photoTarget=null;
+let category="전체", parent=false, photoTarget=null, returnToCountry=null;
 
 const photoMap={
 "사과":"https://commons.wikimedia.org/wiki/Special:FilePath/Apple%20fruit.jpg?width=480",
@@ -389,7 +390,10 @@ async function openDetail(id){
  <div class="photo-note">사진은 도감 화면에서 알아보기 쉽도록 충분히 크게 보여줘요. 등록할 때는 자동으로 긴 변 800px 이하로 줄여 저장하므로 큰 원본 사진을 넣어도 저장공간 부담을 줄일 수 있어요.</div>
  <div class="modal-actions"><button class="btn" id="detailFav">${state.fav.has(f.id)?"⭐ 즐겨찾기 해제":"☆ 즐겨찾기 추가"}</button>${parent?'<button class="btn" id="editFruit">✏️ 정보 수정</button>':''}<button class="btn" id="detailClose">닫기</button></div>`;
  document.getElementById("detailDlg").showModal();
- document.getElementById("detailClose").onclick=()=>document.getElementById("detailDlg").close();
+ document.getElementById("detailClose").onclick=()=>{
+   document.getElementById("detailDlg").close();
+   if(returnToCountry){const c=returnToCountry;returnToCountry=null;setTimeout(()=>openCountry(c),0);}
+ };
  document.getElementById("detailFav").onclick=()=>{state.fav.has(f.id)?state.fav.delete(f.id):state.fav.add(f.id);save();openDetail(id);render()};
  document.querySelectorAll("[data-country]").forEach(b=>b.onclick=()=>openCountry(b.dataset.country));
  document.getElementById("goWorldMap").onclick=()=>{document.getElementById("detailDlg").close();openMap();};
@@ -497,40 +501,64 @@ function directFindFruit(){
  document.getElementById("directAddUnknown").onclick=()=>addDiscovered(canonical);
 }
 
-function addDiscovered(name){
+function addDiscovered(name, options={}){
  const clean=String(name||"").trim(); if(!clean)return;
- if(state.foods.some(f=>f.name===clean)){alert(clean+"은(는) 이미 등록되어 있어요.");return;}
+ const existing=state.foods.find(f=>f.name===clean);
+ if(existing){
+   if(options.returnCountry){
+     returnToCountry=options.returnCountry;
+     const dlg=document.getElementById("countryDlg"); if(dlg&&dlg.open)dlg.close();
+     openDetail(existing.id);
+   }else alert(clean+"은(는) 이미 등록되어 있어요.");
+   return;
+ }
  const x=extra.find(v=>v[0]===clean);
+ const b=base.find(v=>v[0]===clean);
+ const src=x||b;
  const id="f"+Date.now();
- const known=!!x;
- const en=known?x[1]:"";
- const emoji=known?x[2]:"🍎";
- const zone=known?x[3]:"분류 준비 중";
- const region=known?x[4]:"지역 정보 준비 중";
- const countries=known?x[5]:"생산국 정보 준비 중";
- const korean=known?((/한국/.test(x[5])||["금귤","유자","한라봉","비파","매실","무화과"].includes(clean))?"한국 생산: 예":"한국 생산: 확인 필요"):"한국 생산 정보 확인 필요";
- const area=known?(/한국/.test(x[5])?"제주·남부 지역 중심(품종·재배방식에 따라 다름)":"주요 상업 생산지가 한국에 있는지 자료 확인 필요"):"부모님 모드에서 생산지역을 보완할 수 있어요.";
- const harvest=known?(/한국/.test(x[5])?"품종과 지역에 따라 수확시기가 달라요.":"산지의 품종·기후에 따라 달라요."):"부모님 모드에서 수확시기를 보완할 수 있어요.";
- state.foods.push({
-   id,name:clean,en,emoji,zone,region,countries,
-   desc:known?`${clean}는 ${region}에서 알려진 과일이에요. ${en}이라는 영어 이름으로도 불립니다. 재배지역과 품종에 따라 크기·색·맛이 달라질 수 있어요.`:`${clean}은(는) 새로 등록한 과일이에요. 아직 내장 자료가 없는 과일이므로 부모님 모드에서 영어 이름, 지역, 생산국, 맛과 특징 등의 정보를 보완해 주세요.`,
-   taste:known?"맛과 식감은 품종, 익은 정도, 재배환경에 따라 달라요.":"맛과 식감 정보를 부모님 모드에서 보완해 주세요.",
-   climate:known?"주로 "+zone+" 환경에서 재배됩니다.":"자라는 환경 정보를 부모님 모드에서 보완해 주세요.",
-   eat:known?"지역과 품종에 따라 생으로 먹거나 주스·디저트·요리 등에 이용합니다.":"먹는 방법을 부모님 모드에서 보완해 주세요.",
-   korea:korean,korArea:area,harvest:harvest,photo:photoMap[clean]||"",custom:true
- });
- save();alert(clean+"을(를) 도감에 등록했어요!");document.getElementById("discoverDlg").close();render();openDetail(id);
+ const known=!!src;
+ const en=known?src[1]:"";
+ const emoji=known?src[2]:"🍎";
+ const zone=known?src[3]:"분류 준비 중";
+ const region=known?src[4]:"지역 정보 준비 중";
+ const countries=known?src[5]:"생산국 정보 준비 중";
+ const desc=known?(b?src[6]:`${clean}는 ${region}에서 알려진 과일이에요. ${en}이라는 영어 이름으로도 불립니다. 재배지역과 품종에 따라 크기·색·맛이 달라질 수 있어요.`):`${clean}은(는) 새로 등록한 과일이에요. 아직 내장 자료가 없는 과일이므로 부모님 모드에서 영어 이름, 지역, 생산국, 맛과 특징 등의 정보를 보완해 주세요.`;
+ const taste=known?(b?src[7]:"맛과 식감은 품종, 익은 정도, 재배환경에 따라 달라요."):"맛과 식감 정보를 부모님 모드에서 보완해 주세요.";
+ const climate=known?(b?src[8]:"주로 "+zone+" 환경에서 재배됩니다."):"자라는 환경 정보를 부모님 모드에서 보완해 주세요.";
+ const eat=known?(b?src[9]:"지역과 품종에 따라 생으로 먹거나 주스·디저트·요리 등에 이용합니다."):"먹는 방법을 부모님 모드에서 보완해 주세요.";
+ const korean=known?(b?src[10]:((/한국/.test(src[5])||["금귤","유자","한라봉","비파","매실","무화과"].includes(clean))?"한국 생산: 예":"한국 생산: 확인 필요")):"한국 생산 정보 확인 필요";
+ const area=known?(b?src[11]:(/한국/.test(src[5])?"제주·남부 지역 중심(품종·재배방식에 따라 다름)":"주요 상업 생산지가 한국에 있는지 자료 확인 필요")):"부모님 모드에서 생산지역을 보완할 수 있어요.";
+ const harvest=known?(b?src[12]:(/한국/.test(src[5])?"품종과 지역에 따라 수확시기가 달라요.":"산지의 품종·기후에 따라 달라요.")):"부모님 모드에서 수확시기를 보완할 수 있어요.";
+ state.foods.push({id,name:clean,en,emoji,zone,region,countries,desc,taste,climate,eat,korea:korean,korArea:area,harvest,photo:photoMap[clean]||"",custom:!b});
+ save();
+ if(options.returnCountry){
+   returnToCountry=options.returnCountry;
+   const dlg=document.getElementById("countryDlg"); if(dlg&&dlg.open)dlg.close();
+   render();openDetail(id);
+   return;
+ }
+ alert(clean+"을(를) 도감에 등록했어요!");document.getElementById("discoverDlg").close();render();openDetail(id);
 }
 function openCountry(name){
  const x=countryInfo[name]||["정보 준비 중","-","-","과일·농산물","이 나라의 더 자세한 정보를 다음 자료에서 보완할 수 있어요."];
+ const registered=new Map(state.foods.map(f=>[f.name,f]));
+ const catalog=[];
+ base.forEach(v=>catalog.push({name:v[0],en:v[1],emoji:v[2],countries:v[5]}));
+ extra.forEach(v=>{if(!catalog.some(c=>c.name===v[0]))catalog.push({name:v[0],en:v[1],emoji:v[2],countries:v[5]})});
+ state.foods.forEach(f=>{if(!catalog.some(c=>c.name===f.name))catalog.push({name:f.name,en:f.en,emoji:f.emoji,countries:f.countries})});
+ const linked=catalog.filter(f=>String(f.countries||"").split(",").map(v=>v.trim()).includes(name));
  document.getElementById("countryBox").innerHTML=`<h2>🏳️ ${esc(name)}</h2>
  <div class="info">
  <div class="box"><b>📍 위치</b>${esc(x[0])}</div><div class="box"><b>📐 면적</b>${esc(x[1])}</div>
  <div class="box"><b>👥 인구</b>${esc(x[2])}</div><div class="box"><b>🌾 대표 특산품</b>${esc(x[3])}</div>
  <div class="box wide"><b>📚 간단한 역사·특징</b>${esc(x[4])}</div></div>
- <div class="section-title">🍎 이 나라와 연결된 과일</div><div class="tags">${state.foods.filter(f=>f.countries.split(",").map(v=>v.trim()).includes(name)).map(f=>`<button class="chip" data-countryfruit="${esc(f.id)}">${esc(f.emoji)} ${esc(f.name)}</button>`).join("")||'<span class="small">현재 도감에 등록된 연결 과일이 아직 없어요.</span>'}</div>
+ <div class="section-title">🍎 이 나라와 연결된 과일 <span class="small">· 회색=등록됨 / 색상=아직 미등록</span></div>
+ <div class="tags country-fruit-tags">${linked.map(f=>{const r=registered.get(f.name);return r?`<button class="country-fruit-btn registered" data-countryfruit="${esc(r.id)}">${esc(r.emoji)} ${esc(r.name)} ✓</button>`:`<button class="country-fruit-btn unregistered" data-countryadd="${esc(f.name)}">${esc(f.emoji)} ${esc(f.name)} ＋ 등록</button>`}).join("")||'<span class="small">연결된 과일 정보가 아직 없어요.</span>'}</div>
  <div class="data-note">📚 생산국·한국 재배지역·수확시기는 품종, 기후, 재배방식, 연도에 따라 달라질 수 있어요. 이 도감은 앞으로 공신력 있는 농업·국제통계 자료를 기준으로 항목별 검증·보완해 나가는 것을 목표로 합니다.</div><div class="modal-actions"><button class="btn" id="countryClose">닫기</button></div>`;
- document.getElementById("countryDlg").showModal();document.getElementById("countryClose").onclick=()=>document.getElementById("countryDlg").close(); document.querySelectorAll("[data-countryfruit]").forEach(b=>b.onclick=()=>{document.getElementById("countryDlg").close();openDetail(b.dataset.countryfruit)});
+ document.getElementById("countryDlg").showModal();
+ document.getElementById("countryClose").onclick=()=>document.getElementById("countryDlg").close();
+ document.querySelectorAll("[data-countryfruit]").forEach(b=>b.onclick=()=>{const id=b.dataset.countryfruit;returnToCountry=name;document.getElementById("countryDlg").close();openDetail(id)});
+ document.querySelectorAll("[data-countryadd]").forEach(b=>b.onclick=()=>addDiscovered(b.dataset.countryadd,{returnCountry:name}));
 }
 function openParent(){
  if(parent){document.getElementById("bookName").value=localStorage.getItem(NAMEKEY)||"세계 과일도감";document.getElementById("pin").value="";document.getElementById("parentDlg").showModal();return;}
